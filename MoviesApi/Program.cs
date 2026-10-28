@@ -1,5 +1,6 @@
 using MoviesApi.Data;
 using Microsoft.EntityFrameworkCore;
+using MoviesApi.Services;
 namespace MoviesApi
 {
     public class Program
@@ -17,7 +18,7 @@ namespace MoviesApi
             builder.Services.AddSwaggerGen(); // requires Swashbuckle.AspNetCore package
             // Add CORS
             //builder.Services.AddCors();
-
+            builder.Services.AddTransient<IGenresService,GenresService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

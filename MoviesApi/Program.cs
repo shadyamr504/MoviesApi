@@ -21,8 +21,8 @@ namespace MoviesApi
             builder.Services.AddTransient<IGenresService,GenresService>();
             builder.Services.AddTransient<IMoviesService, MoviesService>();
 
-            builder.Services.AddAutoMapper(typeof(Program));
-            
+            builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

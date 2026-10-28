@@ -2,3 +2,4 @@
 global using MoviesApi.Models;
 global using MoviesApi.Data;
 global using MoviesApi.Dtos;
+global using System.Threading.Tasks;

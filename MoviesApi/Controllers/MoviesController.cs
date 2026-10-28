@@ -14,7 +14,7 @@ namespace MoviesApi.Controllers
         private readonly IMoviesService _moviesService;
         private readonly IGenresService _genresService;
 
-        private new List<string> _allowedExtenstion = new List<string> { ".jpg", ".png" };
+        private List<string> _allowedExtenstion = new List<string> { ".jpg", ".png" };
         private long _maxAllowedPosterSize = 1048576;
         public MoviesController(IMoviesService moviesService, IGenresService genresService, IMapper mapper)
         {

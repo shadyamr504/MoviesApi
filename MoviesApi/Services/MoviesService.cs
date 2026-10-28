@@ -33,7 +33,7 @@ namespace MoviesApi.Services
                 .ToListAsync();
         }
 
-        public async Task<Movie> GetById(int id)
+        public async Task<Movie?> GetById(int id)
         {
             return await _context.Movies
                 .Include(m => m.Genre)

@@ -48,11 +48,20 @@ namespace MoviesApi.Controllers
         public async Task<IActionResult> DeleteAsync(byte id)
         {
             var genre = await _genresService.GetById(id);
+
             if (genre == null)
             {
                 return NotFound($"Genre with ID {id} not found.");
             }
-            _genresService.Delete(genre);
+
+            var isDeleted = await _genresService.TryDeleteAsync(genre);
+
+            if (!isDeleted)
+            {
+                return Conflict(
+                    "Cannot delete this genre because it has movies associated with it.");
+            }
+
             return Ok(genre);
         }
     }

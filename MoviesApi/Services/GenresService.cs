@@ -17,11 +17,22 @@ namespace MoviesApi.Services
             return genre;
         }
 
-        public Genre Delete(Genre genre)
+
+
+        public async Task<bool> TryDeleteAsync(Genre genre)
         {
-            _context.Remove(genre);
-            _context.SaveChanges();
-            return genre;
+            var hasMovies = await _context.Movies
+                .AnyAsync(m => m.GenreId == genre.Id);
+
+            if (hasMovies)
+            {
+                return false;
+            }
+
+            _context.Genres.Remove(genre);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<IEnumerable<Genre>> GetAll()
@@ -29,7 +40,7 @@ namespace MoviesApi.Services
             return await _context.Genres.OrderBy(g => g.Name).ToListAsync();
         }
 
-        public async Task<Genre> GetById(byte id)
+        public async Task<Genre?> GetById(byte id)
         {
             return await _context.Genres.SingleOrDefaultAsync(g => g.Id == id);
         }

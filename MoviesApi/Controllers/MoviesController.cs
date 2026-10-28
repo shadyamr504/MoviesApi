@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoviesApi.Services;
@@ -9,23 +10,25 @@ namespace MoviesApi.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly IMoviesService _moviesService;
         private readonly IGenresService _genresService;
 
         private new List<string> _allowedExtenstion = new List<string> { ".jpg", ".png" };
         private long _maxAllowedPosterSize = 1048576;
-        public MoviesController(IMoviesService moviesService, IGenresService genresService)
+        public MoviesController(IMoviesService moviesService, IGenresService genresService, IMapper mapper)
         {
             _moviesService = moviesService;
             _genresService = genresService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
             var movies = await _moviesService.GetAll();
-            //TODO: map movies to DTO
-            return Ok(movies);
+            var data = _mapper.Map<IEnumerable<MovieDetailsDto>>(movies);
+            return Ok(data);
         }
 
         [HttpGet("{id}")]
@@ -35,17 +38,7 @@ namespace MoviesApi.Controllers
 
             if (movie == null)
                 return NotFound();
-            var movieDetails = new MovieDetailsDto
-            {
-                Id = movie.Id,
-                Title = movie.Title,
-                Year = movie.Year,
-                Rate = movie.Rate,
-                StoryLine = movie.StoryLine,
-                Poster = movie.Poster,
-                GenreId = movie.GenreId,
-                GenreName = movie.Genre.Name
-            };
+            var movieDetails = _mapper.Map<MovieDetailsDto>(movie);
             return Ok(movieDetails);
         }
 
@@ -53,8 +46,8 @@ namespace MoviesApi.Controllers
         public async Task<IActionResult> GetByGenreIdAsync(byte GenreId)
         {
             var movies = await _moviesService.GetAll(GenreId);
-            //TODO: map movies to DTO
-            return Ok(movies);
+            var data = _mapper.Map<IEnumerable<MovieDetailsDto>>(movies);
+            return Ok(data);
         }
 
         [HttpPost]
@@ -71,15 +64,8 @@ namespace MoviesApi.Controllers
                 return BadRequest("Invalid genre ID");
             using var dataStream = new MemoryStream();
             await dto.Poster.CopyToAsync(dataStream);
-            var movie = new Movie
-            {
-                Title = dto.Title,
-                Year = dto.Year,
-                Rate = dto.Rate,
-                StoryLine = dto.StoryLine,
-                Poster = dataStream.ToArray(),
-                GenreId = dto.GenreId
-            };
+            var movie = _mapper.Map<Movie>(dto);
+            movie.Poster = dataStream.ToArray();
             await _moviesService.Add(movie);
             return Ok(movie);
         }

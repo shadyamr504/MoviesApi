@@ -19,6 +19,8 @@ namespace MoviesApi
             // Add CORS
             //builder.Services.AddCors();
             builder.Services.AddTransient<IGenresService,GenresService>();
+            builder.Services.AddTransient<IMoviesService, MoviesService>();
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

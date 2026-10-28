@@ -34,6 +34,11 @@ namespace MoviesApi.Services
             return await _context.Genres.SingleOrDefaultAsync(g => g.Id == id);
         }
 
+        public Task<bool> IsValidGenre(byte id)
+        {
+            return _context.Genres.AnyAsync(g => g.Id == id);
+        }
+
         public Genre Update(Genre genre)
         {
             _context.Update(genre);
